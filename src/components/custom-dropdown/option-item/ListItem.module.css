@@ -1,0 +1,21 @@
+.listItem{
+    display: flex;
+    width: 100%;
+    padding: 5px 15px;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.listItemContent{
+    display: flex;
+    flex: 1;
+    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.itemSelected{
+    background-color: black 0.5;
+}
