@@ -5,47 +5,52 @@ import { describe, expect, test, vi } from 'vitest';
 import CustomDropdown from './CustomDropdown';
 import type { CustomDropdownProps } from '../CustomDropdown.types';
 
+const DROPDOWN_DEFAULT_PLACEHOLDER = 'Pick your fav game';
+
 const options = [
   { key: 'zelda', name: 'Zelda', value: 'zelda' },
   { key: 'mario', name: 'Mario', value: 'mario' },
 ];
 
-function renderDropdown(overrides: Partial<CustomDropdownProps> = {}) {
-  const props: CustomDropdownProps = {
+function renderDropdown(props: Partial<CustomDropdownProps> = {}) {
+  const params: CustomDropdownProps = {
     componentId: 'games',
-    placeholder: 'Selecciona un juego',
+    placeholder: DROPDOWN_DEFAULT_PLACEHOLDER,
     options,
     value: null,
     onChange: vi.fn(),
-    ...overrides,
+    ...props,
   };
 
   return {
     user: userEvent.setup(),
     props,
-    ...render(<CustomDropdown {...props} />),
+    ...render(<CustomDropdown {...params} />),
   };
 }
 
+const getButton = () => {
+  const trigger = screen.getByRole('button', {
+      name: DROPDOWN_DEFAULT_PLACEHOLDER,
+    });
+    return trigger;
+};
+
 describe('CustomDropdown', () => {
-  test('muestra el placeholder y comienza cerrado', () => {
+  test('Shows the dropdown initially closed', () => {
     renderDropdown();
 
-    const trigger = screen.getByRole('button', {
-      name: 'Selecciona un juego',
-    });
+    const dropdownButton = getButton();
 
-    expect(trigger).toBeInTheDocument();
-    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(dropdownButton).toBeInTheDocument();
+    expect(dropdownButton).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
 
-  test('abre y cierra la lista al pulsar el botón', async () => {
+  test('open and close the list when clicking the button', async () => {
     const { user } = renderDropdown();
 
-    const trigger = screen.getByRole('button', {
-      name: 'Selecciona un juego',
-    });
+    const trigger = getButton();
 
     await user.click(trigger);
 
