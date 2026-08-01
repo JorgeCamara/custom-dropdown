@@ -28,7 +28,12 @@ function CustomDropdown (props: CustomDropdownProps) {
                 onClick={() => setIsOpen((current) => !current)}
             >
                 <span className={styles.dropdownContent}>
-                    <span className={styles.dropdownLabel}>{props.placeholder || DROPDOWN_CONSTANTS.defaultPlaceholder}</span>
+                    <span
+                        id={`${componentId}_selectorValue`}
+                        className={styles.dropdownLabel}
+                    >
+                            {props.placeholder || DROPDOWN_CONSTANTS.defaultPlaceholder}
+                    </span>
                     <IconContainer iconName={stateIconName} iconSize={getIconSize(ICON_SIZES.SMALL)}/>           
                 </span>
             </button>

@@ -36,6 +36,19 @@ const getButton = () => {
     return trigger;
 };
 
+const getListItemByName = (itemName: string) => {
+  const itemNameToFilter: string = itemName || '';
+  const listItem = screen.getByRole('option', {
+    name: itemNameToFilter,
+  });
+    return listItem;
+};
+
+const getItemsList = () => {
+  const list = screen.queryByRole('listbox');
+  return list;
+}
+
 describe('CustomDropdown', () => {
   test('Shows the dropdown initially closed', () => {
     renderDropdown();
@@ -62,5 +75,35 @@ describe('CustomDropdown', () => {
 
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
+
+  test('notify selected option and close the list', async () => {
+    const onChange = vi.fn();
+    const { user } = renderDropdown({ onChange });
+    const trigger = getButton();
+
+    await user.click(trigger);
+    expect(getItemsList()).toBeInTheDocument();
+
+    const listItem = getListItemByName('Zelda');
+    expect(listItem).toBeDefined();
+    expect(listItem).toBeInTheDocument();
+
+    await user.click(listItem);
+
+    expect(getItemsList()).not.toBeInTheDocument();
+  });
+
+  test('show selected item name on the dropdown placeholder', async () => {
+    const onChange = vi.fn();
+    const { user } = renderDropdown({ onChange });
+    const trigger = getButton();
+
+    await user.click(trigger);
+    const listItem = getListItemByName('Zelda');
+
+    await user.click(listItem);
+
+    expect(trigger.ariaPlaceholder).toBe('Zelda');
   });
 });
