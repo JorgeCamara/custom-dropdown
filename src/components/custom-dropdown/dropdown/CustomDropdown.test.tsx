@@ -3,9 +3,10 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi } from 'vitest';
 
 import CustomDropdown from './CustomDropdown';
-import type { CustomDropdownProps } from '../CustomDropdown.types';
+import type { CustomDropdownProps, useCustomDropdownProps } from '../CustomDropdown.types';
 
 const DROPDOWN_DEFAULT_PLACEHOLDER = 'Pick your fav game';
+const COMPONENT_ID = 'games';
 
 const options = [
   { key: 'zelda', name: 'Zelda', value: 'zelda' },
@@ -13,13 +14,17 @@ const options = [
 ];
 
 function renderDropdown(props: Partial<CustomDropdownProps> = {}) {
-  const params: CustomDropdownProps = {
-    componentId: 'games',
-    placeholder: DROPDOWN_DEFAULT_PLACEHOLDER,
+  const useDropdownProps: useCustomDropdownProps = {
     options,
+    placeholder: DROPDOWN_DEFAULT_PLACEHOLDER,
     value: null,
+    disabled: false,
+    ...props
+  };
+  const params: CustomDropdownProps = {
+    componentId: COMPONENT_ID,
     onChange: vi.fn(),
-    ...props,
+    ...useDropdownProps,
   };
 
   return {
@@ -29,9 +34,10 @@ function renderDropdown(props: Partial<CustomDropdownProps> = {}) {
   };
 }
 
-const getButton = () => {
+const getButton = (displayedText?: string) => {
+  const buttonName = displayedText || DROPDOWN_DEFAULT_PLACEHOLDER;
   const trigger = screen.getByRole('button', {
-      name: DROPDOWN_DEFAULT_PLACEHOLDER,
+      name: buttonName,
     });
     return trigger;
 };
@@ -52,7 +58,6 @@ const getItemsList = () => {
 describe('CustomDropdown', () => {
   test('Shows the dropdown initially closed', () => {
     renderDropdown();
-
     const dropdownButton = getButton();
 
     expect(dropdownButton).toBeInTheDocument();
@@ -77,7 +82,7 @@ describe('CustomDropdown', () => {
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
 
-  test('notify selected option and close the list', async () => {
+  test('Clicking on an element list closes the list', async () => {
     const onChange = vi.fn();
     const { user } = renderDropdown({ onChange });
     const trigger = getButton();
@@ -94,16 +99,47 @@ describe('CustomDropdown', () => {
     expect(getItemsList()).not.toBeInTheDocument();
   });
 
-  test('show selected item name on the dropdown placeholder', async () => {
+  test('clicked item data is returned on the onChange callback', async () => {
     const onChange = vi.fn();
     const { user } = renderDropdown({ onChange });
+
+    await user.click(getButton());
+
+    await user.click(getListItemByName('Zelda'));
+    expect(onChange).toHaveBeenCalledWith(options[0]);
+  });
+
+  test('selected item is shown in the list with a check mark', async () => {
+    const { user } = renderDropdown({ value: { key: 'mario', name: 'Mario', value: 'mario' }});
+
+    await user.click(getButton('Mario'));
+    const firstItem = getListItemByName('Zelda');
+    const secondItem = getListItemByName('Mario');
+    expect(firstItem).toHaveAttribute('aria-selected', 'false');
+    expect(secondItem).toHaveAttribute('aria-selected', 'true');
+  });
+
+  test('when dropdown is disabled list cannot be opened', async () => {
+    const { user } = renderDropdown({ disabled: true });
+
     const trigger = getButton();
+    expect(trigger).toHaveAttribute('disabled');
+    expect(trigger).toHaveAttribute('aria-disabled', 'true');
+    await user.click(getButton());
 
-    await user.click(trigger);
-    const listItem = getListItemByName('Zelda');
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
 
-    await user.click(listItem);
+  test('when dropdown has no options behaves same as disabled', async () => {
+    const { user } = renderDropdown({ options: [] });
 
-    expect(trigger.ariaPlaceholder).toBe('Zelda');
+    const trigger = getButton();
+    expect(trigger).toHaveAttribute('disabled');
+    expect(trigger).toHaveAttribute('aria-disabled', 'true');
+    await user.click(getButton());
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
 });

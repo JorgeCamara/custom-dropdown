@@ -20,7 +20,7 @@ function DropdownSelector () {
     return (
     <>
       <section>
-        <span className={styles.dropdownLabel}>{DROPDOWN_LABEL}</span>
+        <label className={styles.dropdownLabel}>{DROPDOWN_LABEL}</label>
         <CustomDropdown
           componentId={DROPDOWN_ID}
           placeholder={getPlaceholderValue()}

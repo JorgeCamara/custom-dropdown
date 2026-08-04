@@ -1,39 +1,57 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DropdownOptionList from '@components/custom-dropdown/option-list/DropdownOptionList';
 import IconContainer from '@/containers/icon/IconContainer';
 import { ICON_SIZES, ICONS, getIconSize } from '@/containers/icon/Icon';
-import type { DropdownOptionProps, CustomDropdownProps } from '@components/custom-dropdown/CustomDropdown.types';
 import DROPDOWN_CONSTANTS from '@components/custom-dropdown/dropdown/DropdownConstants';
+import useCustomDropdowns from '@components/custom-dropdown/dropdown/useCustomDropdown';
+import type { DropdownOptionProps, CustomDropdownProps } from '@components/custom-dropdown/CustomDropdown.types';
 import styles from '@components/custom-dropdown/dropdown/CustomDropdown.module.css';
 
+const getPlaceholderId = (componentId: string) => {
+    return `${componentId}_selectorValue`;
+};
+
 function CustomDropdown (props: CustomDropdownProps) {
-    const { value, componentId, disabled } = props;
+    const { value, componentId, disabled = false, options = [], placeholder = '' } = props;
     const [isOpen, setIsOpen] = useState(false);
+    const stateIconName = isOpen ? ICONS.chevronUp : ICONS.chevronDown;
+    const { isDisabled, displayedText } = useCustomDropdowns({ disabled, options, value, placeholder });
 
     const onOptionSelection = (selectedOption: DropdownOptionProps) => {
         setIsOpen(false);
         props.onChange?.(selectedOption);
     };
-    const stateIconName = isOpen ? ICONS.chevronUp : ICONS.chevronDown;
+
+    useEffect(() => {
+        if(isDisabled){
+            setIsOpen(false);
+        }
+    }, [isDisabled]);
 
     return (
         <div className={styles.customDropdown}>
             <button
-                disabled={disabled}
+                disabled={isDisabled}
+                aria-disabled={isDisabled}
                 type='button'
                 aria-expanded={isOpen}
                 aria-haspopup='listbox'
                 aria-controls={componentId}
                 className={styles.dropdownSelector}
-                onClick={() => setIsOpen((current) => !current)}
+                onClick={() => {
+                    if(!isDisabled){
+                        setIsOpen((current) => !current);
+                    }
+                }}
             >
                 <span className={styles.dropdownContent}>
-                    <span
-                        id={`${componentId}_selectorValue`}
+                    <label
+                        id={getPlaceholderId(componentId)}
                         className={styles.dropdownLabel}
+                        aria-placeholder={placeholder || DROPDOWN_CONSTANTS.defaultPlaceholder}
                     >
-                            {props.placeholder || DROPDOWN_CONSTANTS.defaultPlaceholder}
-                    </span>
+                            {displayedText}
+                    </label>
                     <IconContainer iconName={stateIconName} iconSize={getIconSize(ICON_SIZES.SMALL)}/>           
                 </span>
             </button>
@@ -51,4 +69,7 @@ function CustomDropdown (props: CustomDropdownProps) {
     );
 }
 
-export default CustomDropdown;
+export {
+    CustomDropdown as default,
+    getPlaceholderId,
+};

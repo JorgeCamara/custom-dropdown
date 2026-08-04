@@ -7,7 +7,7 @@ export interface DropdownOptionProps{
 };
 
 export interface DropdownOptionListProps{
-    dropdownId?: string;
+    dropdownId?: string,
     optionList: DropdownOptionProps[],
     onOptionSelected: (selection: DropdownOptionProps) => void,
     selectedOption: DropdownOptionProps | null,
@@ -15,7 +15,7 @@ export interface DropdownOptionListProps{
 };
 
 export interface CustomDropdownProps{
-    componentId: string;
+    componentId: string,
     placeholder: string,
     disabled?: boolean,
     options?: DropdownOptionProps[],
@@ -28,4 +28,11 @@ export interface ListItemProps{
     option: DropdownOptionProps,
     onSelect: (option: DropdownOptionProps) => void,
     isSelected?: boolean,
+}
+
+export interface useCustomDropdownProps{
+    disabled: boolean;
+    options: DropdownOptionProps[],
+    value: DropdownOptionProps | null,
+    placeholder: string,
 }
