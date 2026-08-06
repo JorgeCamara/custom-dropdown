@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+
 import DropdownOptionList from '@components/custom-dropdown/option-list/DropdownOptionList';
 import IconContainer from '@/containers/icon/IconContainer';
 import { ICON_SIZES, ICONS, getIconSize } from '@/containers/icon/Icon';
 import DROPDOWN_CONSTANTS from '@components/custom-dropdown/dropdown/DropdownConstants';
 import useCustomDropdowns from '@components/custom-dropdown/dropdown/useCustomDropdown';
-import type { DropdownOptionProps, CustomDropdownProps } from '@components/custom-dropdown/CustomDropdown.types';
+import type { CustomDropdownProps } from '@components/custom-dropdown/CustomDropdown.types';
 import styles from '@components/custom-dropdown/dropdown/CustomDropdown.module.css';
 
 const getPlaceholderId = (componentId: string) => {
@@ -12,21 +12,19 @@ const getPlaceholderId = (componentId: string) => {
 };
 
 function CustomDropdown (props: CustomDropdownProps) {
-    const { value, componentId, disabled = false, options = [], placeholder = '' } = props;
-    const [isOpen, setIsOpen] = useState(false);
+    const { value, componentId, disabled = false, options = [], placeholder = '', onChange } = props;
+    const {
+        isDisabled,
+        displayedText,
+        isOpen,
+        buttonRef,
+        listBoxRef,
+        setIsOpen,
+        handleButtonKeyDown,
+        handleListboxKeyDown,
+        activeOption,
+    } = useCustomDropdowns({ disabled, options, value, placeholder, onChange });
     const stateIconName = isOpen ? ICONS.chevronUp : ICONS.chevronDown;
-    const { isDisabled, displayedText } = useCustomDropdowns({ disabled, options, value, placeholder });
-
-    const onOptionSelection = (selectedOption: DropdownOptionProps) => {
-        setIsOpen(false);
-        props.onChange?.(selectedOption);
-    };
-
-    useEffect(() => {
-        if(isDisabled){
-            setIsOpen(false);
-        }
-    }, [isDisabled]);
 
     return (
         <div className={styles.customDropdown}>
@@ -38,6 +36,8 @@ function CustomDropdown (props: CustomDropdownProps) {
                 aria-haspopup='listbox'
                 aria-controls={componentId}
                 className={styles.dropdownSelector}
+                ref={buttonRef}
+                onKeyDown={handleButtonKeyDown}
                 onClick={() => {
                     if(!isDisabled){
                         setIsOpen((current) => !current);
@@ -59,9 +59,12 @@ function CustomDropdown (props: CustomDropdownProps) {
                 (<DropdownOptionList
                     dropdownId={componentId}
                     optionList={props.options ?? []}
-                    onOptionSelected={onOptionSelection}
+                    onOptionSelected={onChange}
                     selectedOption={value}
                     maxWidth={props.optionListMaxWidth}
+                    activeOptionKey={activeOption?.key ?? ''}
+                    componentRef={listBoxRef}
+                    keyEventHandler={handleListboxKeyDown}
                 />
                 )
             }

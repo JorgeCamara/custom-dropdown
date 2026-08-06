@@ -19,6 +19,7 @@ function renderDropdown(props: Partial<CustomDropdownProps> = {}) {
     placeholder: DROPDOWN_DEFAULT_PLACEHOLDER,
     value: null,
     disabled: false,
+    buttonRef: null,
     ...props
   };
   const params: CustomDropdownProps = {

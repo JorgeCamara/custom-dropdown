@@ -18,6 +18,7 @@ function ListItem (props: ListItemProps) {
             aria-selected={isSelected}
             onClick={() => onSelect(option)}
             className={itemStyles}
+            id={option.key}
         >
             <span className={styles.listItemContent}>
                 <span>{option.name}</span>

@@ -7,7 +7,7 @@ import styles from '@containers/dropdown-demo/DropdownDemo.module.css';
 function DropdownSelector () {
     const [selectedGame, setSelectedGame] = useState<null | DropdownOptionProps>(null);
 
-    const updateDropdownSelection = (selectedOption: DropdownOptionProps) => {
+    const updateDropdownSelection = (selectedOption: DropdownOptionProps | null) => {
       setSelectedGame(selectedOption);
     }
 
