@@ -10,7 +10,6 @@ function useCustomDropdown (props: useCustomDropdownProps) {
     const buttonRef = useRef<HTMLButtonElement>(null);
     const listBoxRef = useRef<HTMLUListElement>(null);
     const activeOption = options[activeIndex];
-    console.log(`ACTIVE INDEX ES: ${activeIndex}`)
 
     const hasOptions = options.length > 0;
     const isDisabled = disabled || !hasOptions;
@@ -29,19 +28,13 @@ function useCustomDropdown (props: useCustomDropdownProps) {
             case 'Escape':
                 closeDropdown({ manageFocus: false});
                 break;
-            /* case 'Escape':
-                closeDropdown();
-                break;
-            case 'Escape':
-                closeDropdown();
-                break; */
             default:
                 break;
         }
     };
 
     const increaseActiveIndex = () => {
-        if(activeIndex < options.length){
+        if(activeIndex < options.length - 1){
             setActiveIndex((currentIndex) => currentIndex + 1);
             return;
         }
@@ -53,7 +46,7 @@ function useCustomDropdown (props: useCustomDropdownProps) {
             setActiveIndex((currentIndex) => currentIndex - 1);
             return;
         }
-        setActiveIndex(options.length);
+        setActiveIndex(options.length ? options.length - 1 : 0);
     };
 
     const selectActiveOption = () => {
@@ -62,7 +55,6 @@ function useCustomDropdown (props: useCustomDropdownProps) {
     }
 
     const handleListboxKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-        console.log(`Hola ${event}`);
         switch (event.key) {
             case 'ArrowDown':
                 event.preventDefault();

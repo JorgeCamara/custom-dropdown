@@ -26,7 +26,6 @@ function DropdownOptionList (props: DropdownOptionListProps) {
                 ref={componentRef}
                 onKeyDown={keyEventHandler}
                 tabIndex={-1}
-                
             >
                 {(optionList || []).map((item: DropdownOptionProps) => {
                     return (
@@ -35,6 +34,7 @@ function DropdownOptionList (props: DropdownOptionListProps) {
                             option={item}
                             onSelect={onOptionSelected}
                             isSelected={selectedOption?.key === item.key || false}
+                            isActive={item.key === activeOptionKey}
                         />
                     )
                 }

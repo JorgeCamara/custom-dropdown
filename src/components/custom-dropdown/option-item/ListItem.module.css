@@ -19,3 +19,7 @@
 .itemSelected{
     background-color: black 0.5;
 }
+
+.itemActive{
+    background-color: #F0F0F0;
+}

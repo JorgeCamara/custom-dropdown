@@ -4,10 +4,11 @@ import { ICONS, getIconSize, ICON_SIZES } from '@containers/icon/Icon';
 import styles from '@components/custom-dropdown/option-item/ListItem.module.css';
 
 function ListItem (props: ListItemProps) {
-    const { option, onSelect, isSelected } = props;
+    const { option, onSelect, isSelected, isActive } = props;
     const itemStyles = [
         styles.listItem,
         isSelected ? styles.itemSelected : undefined,
+        isActive ? styles.itemActive : undefined,
     ]
         .filter(Boolean)
         .join(' ');

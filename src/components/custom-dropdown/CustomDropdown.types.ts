@@ -1,4 +1,4 @@
-import type { CSSProperties, Ref, RefObject } from 'react';
+import type { CSSProperties, Ref } from 'react';
 
 export interface DropdownOptionProps{
     key: string,
@@ -31,6 +31,7 @@ export interface ListItemProps{
     option: DropdownOptionProps,
     onSelect: (option: DropdownOptionProps) => void,
     isSelected?: boolean,
+    isActive?: boolean;
 }
 
 export interface useCustomDropdownProps{
